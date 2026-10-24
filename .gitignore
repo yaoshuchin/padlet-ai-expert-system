@@ -1,0 +1,5 @@
+node_modules/
+.DS_Store
+Thumbs.db
+chrome_temp_profile*
+*.log

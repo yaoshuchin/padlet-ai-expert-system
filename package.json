@@ -1,0 +1,21 @@
+{
+  "name": "padlet-ai-expert-system",
+  "version": "1.0.0",
+  "description": "AI 專家系統建置練習 · 紅焰 × Edcafe AI / Poe 教師機器人成果全集 (100% 離線鏡像)",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "build-data": "node scripts/build_dataset.js",
+    "download-assets": "node scripts/download_all_assets.js"
+  },
+  "keywords": [
+    "edcafe",
+    "poe",
+    "ai",
+    "chatbot",
+    "padlet",
+    "education"
+  ],
+  "author": "yaoshuchin",
+  "license": "MIT"
+}

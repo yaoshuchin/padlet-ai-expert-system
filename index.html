@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI專家系統建置練習 - 紅焰 × Edcafe AI / Poe 教學機器人成果全集</title>
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans TC"', 'Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f5f3ff',
+              100: '#ede9fe',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.45);
+    }
+    
+    body {
+      font-family: 'Noto Sans TC', Inter, sans-serif;
+      background-color: #0f172a;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.78) 0%, rgba(15, 23, 42, 0.95) 100%),
+        url("assets/images/wallpaper.png");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
+
+    html:not(.dark) body {
+      background-color: #f8fafc;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(248, 250, 252, 0.82) 0%, rgba(241, 245, 249, 0.96) 100%),
+        url("assets/images/wallpaper.png");
+    }
+
+    .masonry-grid {
+      column-count: 1;
+      column-gap: 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .masonry-grid { column-count: 2; }
+    }
+    @media (min-width: 1024px) {
+      .masonry-grid { column-count: 3; }
+    }
+    @media (min-width: 1440px) {
+      .masonry-grid { column-count: 4; }
+    }
+    @media (min-width: 1920px) {
+      .masonry-grid { column-count: 5; }
+    }
+    
+    .masonry-item {
+      break-inside: avoid;
+      margin-bottom: 1.5rem;
+    }
+
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .line-clamp-4 {
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .glass-panel {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    html:not(.dark) .glass-panel {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .card-glass {
+      background: rgba(30, 41, 59, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.25s ease-in-out;
+    }
+    html:not(.dark) .card-glass {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+    .card-glass:hover {
+      transform: translateY(-4px);
+      border-color: rgba(139, 92, 246, 0.4);
+      box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.25);
+    }
+    html:not(.dark) .card-glass:hover {
+      box-shadow: 0 12px 24px -6px rgba(139, 92, 246, 0.15);
+    }
+  </style>
+</head>
+<body class="text-slate-100 dark:text-slate-100 transition-colors duration-200">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-slate-700/50 dark:border-slate-700/50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+      <div class="flex items-center justify-between gap-4">
+        <!-- Logo & Title -->
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/20 text-white font-black text-xl flex-shrink-0">
+            🤖
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white dark:text-white truncate" id="siteTitle">
+                AI 專家系統建置練習
+              </h1>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                紅焰 × Edcafe AI
+              </span>
+            </div>
+            <p class="text-xs text-slate-400 dark:text-slate-400 truncate hidden sm:block">
+              從 AI 問答走向教學工作流 · 全套 141 位自製教學機器人與成果庫 (100% 離線備份)
+            </p>
+          </div>
+        </div>
+
+        <!-- Action Tools -->
+        <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          <!-- Random Pick Button -->
+          <button id="btnRandom" title="隨機推薦一位 AI 專家" class="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-xs font-medium flex items-center gap-1.5 transition">
+            <i data-lucide="sparkles" class="w-4 h-4 text-indigo-400"></i>
+            <span class="hidden md:inline">隨機抽籤</span>
+          </button>
+
+          <!-- Export CSV -->
+          <button id="btnExportCSV" title="匯出完整 Excel / CSV 清單" class="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-medium flex items-center gap-1.5 transition">
+            <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i>
+            <span class="hidden md:inline">匯出清單</span>
+          </button>
+
+          <!-- Original Padlet Link -->
+          <a href="https://padlet.com/inforissuescounseling/ai-ok7vcvfs07ktjwx6" target="_blank" rel="noopener noreferrer" title="開啟原始 Padlet 看板" class="p-2 sm:px-3 sm:py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-medium flex items-center gap-1.5 transition">
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+            <span class="hidden lg:inline">原始看板</span>
+          </a>
+
+          <!-- Dark / Light Toggle -->
+          <button id="btnThemeToggle" title="切換深色 / 淺色模式" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+            <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+            <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters & Controls Section -->
+      <div class="mt-3.5 pt-3 border-t border-slate-700/40 flex flex-col gap-3">
+        
+        <!-- Search and View Modes -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <!-- Search Bar -->
+          <div class="relative flex-1 max-w-2xl">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </div>
+            <input 
+              type="text" 
+              id="searchInput"
+              placeholder="搜尋機器人名稱、教師作者、學科主題、說明關鍵字... (按 / 快速定位)"
+              class="w-full pl-9 pr-9 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition shadow-inner"
+            >
+            <button id="btnClearSearch" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-200 hidden">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- View Switcher -->
+          <div class="flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700 self-end sm:self-auto">
+            <button id="viewMasonry" class="px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 bg-purple-600 text-white shadow-sm transition" title="瀑布流看板視圖">
+              <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+              <span class="hidden sm:inline">瀑布流</span>
+            </button>
+            <button id="viewGrid" class="px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-slate-400 hover:text-slate-200 transition" title="標準網格視圖">
+              <i data-lucide="grid-3x3" class="w-3.5 h-3.5"></i>
+              <span class="hidden sm:inline">網格</span>
+            </button>
+            <button id="viewList" class="px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-slate-400 hover:text-slate-200 transition" title="清單條列視圖">
+              <i data-lucide="list" class="w-3.5 h-3.5"></i>
+              <span class="hidden sm:inline">清單</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Badges / Pills -->
+        <div class="flex flex-col gap-2">
+          <!-- Platform Filter -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
+            <span class="text-slate-400 font-semibold whitespace-nowrap flex items-center gap-1">
+              <i data-lucide="cpu" class="w-3.5 h-3.5"></i> 平台：
+            </span>
+            <div id="platformPills" class="flex items-center gap-1.5">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Category Filter -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
+            <span class="text-slate-400 font-semibold whitespace-nowrap flex items-center gap-1">
+              <i data-lucide="tag" class="w-3.5 h-3.5"></i> 領域：
+            </span>
+            <div id="categoryPills" class="flex items-center gap-1.5">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- Stats Banner -->
+    <div class="mb-6 p-4 rounded-2xl glass-panel shadow-sm flex flex-wrap items-center justify-between gap-4 border border-slate-700/60">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
+          <i data-lucide="bot" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="text-sm font-bold text-white flex items-center gap-2">
+            <span>已收錄 <span id="statFilteredCount" class="text-purple-400 text-base font-extrabold">141</span> / <span id="statTotalCount">141</span> 個 AI 專家教學實作</span>
+          </div>
+          <div class="text-xs text-slate-400 mt-0.5">
+            涵蓋 Edcafe AI 補救教練 (56)、Poe 專家系統 (77)、ChatGPT (2) 與各科教材素材
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 text-xs text-slate-300">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+          <span>Edcafe AI: <b>56</b></span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+          <span>Poe: <b>77</b></span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          <span>其他平台: <b>8</b></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cards Container -->
+    <div id="cardsContainer" class="masonry-grid transition-all duration-300">
+      <!-- Cards rendered by JS -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-20">
+      <div class="inline-flex p-4 rounded-2xl bg-slate-800/60 border border-slate-700 mb-4 text-slate-400">
+        <i data-lucide="search-x" class="w-10 h-10"></i>
+      </div>
+      <h3 class="text-lg font-bold text-slate-200">找不到符合條件的 AI 專家機器人</h3>
+      <p class="text-sm text-slate-400 mt-1 max-w-sm mx-auto">
+        請嘗試更換搜尋關鍵字，或是清除目前選取的平台與主題標籤。
+      </p>
+      <button id="btnResetFilters" class="mt-4 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold shadow-md transition">
+        重設所有篩選條件
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Detail Modal -->
+  <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-200">
+    <div class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl glass-panel bg-slate-900/95 border border-slate-700 shadow-2xl p-6 transform scale-95 transition-transform duration-200" id="modalBox">
+      <!-- Close button -->
+      <button id="btnCloseModal" class="absolute top-4 right-4 p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Modal Image -->
+      <div id="modalImageContainer" class="mb-5 rounded-xl overflow-hidden bg-slate-800/80 border border-slate-700/60 flex items-center justify-center max-h-64">
+        <img id="modalImage" src="" alt="預覽" class="w-full h-full object-cover">
+      </div>
+
+      <!-- Badges -->
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span id="modalPlatform" class="px-2.5 py-1 rounded-md text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30"></span>
+        <span id="modalCategory" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30"></span>
+        <span id="modalAuthor" class="text-xs text-slate-400 flex items-center gap-1">
+          <i data-lucide="user" class="w-3.5 h-3.5"></i> <span id="modalAuthorName"></span>
+        </span>
+        <span id="modalDate" class="text-xs text-slate-500 flex items-center gap-1">
+          <i data-lucide="calendar" class="w-3.5 h-3.5"></i> <span id="modalDateVal"></span>
+        </span>
+      </div>
+
+      <!-- Title -->
+      <h2 id="modalTitle" class="text-xl sm:text-2xl font-bold text-white mb-3"></h2>
+
+      <!-- Description / Instructions -->
+      <div class="mb-5">
+        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">核心任務說明與人設</h4>
+        <div id="modalDescription" class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-sm text-slate-200 leading-relaxed max-h-48 overflow-y-auto whitespace-pre-wrap"></div>
+      </div>
+
+      <!-- Body / Essay if present -->
+      <div id="modalBodySection" class="mb-5 hidden">
+        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">詳細教材與內容</h4>
+        <div id="modalBody" class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-sm text-slate-200 leading-relaxed max-h-60 overflow-y-auto whitespace-pre-wrap"></div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-800">
+        <div class="flex items-center gap-2">
+          <button id="btnModalCopyLink" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center gap-1.5 transition">
+            <i data-lucide="copy" class="w-4 h-4"></i>
+            <span>複製網址</span>
+          </button>
+          <button id="btnModalCopyPrompt" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center gap-1.5 transition">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            <span>複製說明</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <a id="modalLaunchBtn" href="#" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-purple-500/20 flex items-center gap-1.5 transition">
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+            <span id="modalLaunchText">前往機器人</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-slate-900 border border-purple-500/40 text-white shadow-2xl transform translate-y-12 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="p-1 rounded-lg bg-purple-500/20 text-purple-400">
+      <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+    </div>
+    <span id="toastMsg" class="text-xs font-medium">已複製到剪貼簿！</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-20 py-8 border-t border-slate-800/80 glass-panel">
+    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400">
+      <p class="mb-2">AI 專家系統建置練習 · 成果展現與備課工作流</p>
+      <p class="text-slate-500">
+        原始看板：<a href="https://padlet.com/inforissuescounseling/ai-ok7vcvfs07ktjwx6" target="_blank" class="underline hover:text-slate-300">臺中市資訊教育議題分團輔導員 (moodlela)</a> · 100% 本機離線典藏與 GitHub Pages 鏡像
+      </p>
+    </div>
+  </footer>
+
+  <!-- Load Data -->
+  <script src="data.js"></script>
+
+  <!-- Application Logic -->
+  <script>
+    (function() {
+      const data = window.PADLET_DATA || { cards: [], stats: { platforms: {}, categories: {} } };
+      let currentCards = [...data.cards];
+      let activePlatform = 'ALL';
+      let activeCategory = 'ALL';
+      let searchQuery = '';
+      let currentView = 'masonry';
+      let selectedCard = null;
+
+      // Platform config
+      const platformStyles = {
+        'Edcafe AI': {
+          badge: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+          dot: 'bg-purple-500',
+          icon: 'bot'
+        },
+        'Poe': {
+          badge: 'bg-sky-500/20 text-sky-300 border-sky-500/30',
+          dot: 'bg-sky-500',
+          icon: 'message-square'
+        },
+        'ChatGPT': {
+          badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+          dot: 'bg-emerald-500',
+          icon: 'sparkles'
+        },
+        'HuggingChat': {
+          badge: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+          dot: 'bg-amber-500',
+          icon: 'cpu'
+        },
+        'Felo AI': {
+          badge: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
+          dot: 'bg-indigo-500',
+          icon: 'search'
+        },
+        '本機檔案': {
+          badge: 'bg-pink-500/20 text-pink-300 border-pink-500/30',
+          dot: 'bg-pink-500',
+          icon: 'file'
+        },
+        '自訂文章/範例': {
+          badge: 'bg-slate-500/20 text-slate-300 border-slate-500/30',
+          dot: 'bg-slate-400',
+          icon: 'book-open'
+        }
+      };
+
+      // Category colors
+      const categoryStyles = {
+        '歷史人文': 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+        '體育運動': 'bg-orange-500/15 text-orange-300 border-orange-500/30',
+        '思辨解題': 'bg-violet-500/15 text-violet-300 border-violet-500/30',
+        '閱讀理解': 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+        '作文寫作': 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+        '身心健康': 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+        '藝文名人': 'bg-fuchsia-500/15 text-fuchsia-300 border-fuchsia-500/30',
+        '教學輔助': 'bg-teal-500/15 text-teal-300 border-teal-500/30'
+      };
+
+      // Elements
+      const cardsContainer = document.getElementById('cardsContainer');
+      const emptyState = document.getElementById('emptyState');
+      const searchInput = document.getElementById('searchInput');
+      const btnClearSearch = document.getElementById('btnClearSearch');
+      const platformPills = document.getElementById('platformPills');
+      const categoryPills = document.getElementById('categoryPills');
+      const statFilteredCount = document.getElementById('statFilteredCount');
+      const statTotalCount = document.getElementById('statTotalCount');
+      const detailModal = document.getElementById('detailModal');
+      const modalBox = document.getElementById('modalBox');
+
+      // Initialize
+      function init() {
+        statTotalCount.innerText = data.cards.length;
+        renderFilterPills();
+        filterAndRenderCards();
+        initEventListeners();
+        lucide.createIcons();
+      }
+
+      // Render filter pills
+      function renderFilterPills() {
+        // Platform Pills
+        const platforms = ['ALL', 'Edcafe AI', 'Poe', 'ChatGPT', '本機檔案'];
+        platformPills.innerHTML = platforms.map(p => {
+          const count = p === 'ALL' ? data.cards.length : (data.stats.platforms[p] || 0);
+          const isAct = p === activePlatform;
+          return `
+            <button data-platform="${p}" class="platform-btn px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${
+              isAct 
+                ? 'bg-purple-600 text-white shadow-sm' 
+                : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700 border border-slate-700/60'
+            }">
+              <span>${p === 'ALL' ? '全部平台' : p}</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded-full ${isAct ? 'bg-purple-700/80 text-purple-100' : 'bg-slate-700 text-slate-400'}">${count}</span>
+            </button>
+          `;
+        }).join('');
+
+        // Category Pills
+        const categories = ['ALL', ...Object.keys(data.stats.categories)];
+        categoryPills.innerHTML = categories.map(cat => {
+          const count = cat === 'ALL' ? data.cards.length : (data.stats.categories[cat] || 0);
+          const isAct = cat === activeCategory;
+          return `
+            <button data-category="${cat}" class="category-btn px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${
+              isAct 
+                ? 'bg-indigo-600 text-white shadow-sm' 
+                : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700 border border-slate-700/60'
+            }">
+              <span>${cat === 'ALL' ? '全部領域' : cat}</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded-full ${isAct ? 'bg-indigo-700/80 text-indigo-100' : 'bg-slate-700 text-slate-400'}">${count}</span>
+            </button>
+          `;
+        }).join('');
+      }
+
+      // Filter and render
+      function filterAndRenderCards() {
+        const query = searchQuery.trim().toLowerCase();
+        
+        currentCards = data.cards.filter(c => {
+          // Platform check
+          if (activePlatform !== 'ALL') {
+            if (activePlatform === '本機檔案') {
+              if (c.platform !== '本機檔案' && !c.local_file) return false;
+            } else if (c.platform !== activePlatform) {
+              return false;
+            }
+          }
+
+          // Category check
+          if (activeCategory !== 'ALL' && c.category !== activeCategory) {
+            return false;
+          }
+
+          // Search query check
+          if (query) {
+            const matchTitle = (c.title || '').toLowerCase().includes(query);
+            const matchAuthor = (c.author || '').toLowerCase().includes(query);
+            const matchDesc = (c.description || '').toLowerCase().includes(query);
+            const matchBody = (c.clean_body || '').toLowerCase().includes(query);
+            const matchCat = (c.category || '').toLowerCase().includes(query);
+            const matchPlat = (c.platform || '').toLowerCase().includes(query);
+            if (!matchTitle && !matchAuthor && !matchDesc && !matchBody && !matchCat && !matchPlat) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+
+        statFilteredCount.innerText = currentCards.length;
+
+        if (currentCards.length === 0) {
+          cardsContainer.classList.add('hidden');
+          emptyState.classList.remove('hidden');
+        } else {
+          cardsContainer.classList.remove('hidden');
+          emptyState.classList.add('hidden');
+          renderCards();
+        }
+      }
+
+      // Render cards
+      function renderCards() {
+        if (currentView === 'masonry') {
+          cardsContainer.className = 'masonry-grid transition-all duration-300';
+          cardsContainer.innerHTML = currentCards.map(c => renderCardItem(c, 'masonry')).join('');
+        } else if (currentView === 'grid') {
+          cardsContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 transition-all duration-300';
+          cardsContainer.innerHTML = currentCards.map(c => renderCardItem(c, 'grid')).join('');
+        } else {
+          cardsContainer.className = 'flex flex-col gap-3 transition-all duration-300';
+          cardsContainer.innerHTML = currentCards.map(c => renderCardItem(c, 'list')).join('');
+        }
+
+        lucide.createIcons();
+      }
+
+      function renderCardItem(c, viewMode) {
+        const pStyle = platformStyles[c.platform] || platformStyles['其他平台'] || { badge: 'bg-slate-700 text-slate-300', dot: 'bg-slate-400', icon: 'bot' };
+        const catStyle = categoryStyles[c.category] || 'bg-slate-700/30 text-slate-300 border-slate-600/30';
+        
+        const imgSrc = c.local_image || c.original_image || '';
+        const hasImg = !!imgSrc;
+        const targetUrl = c.url || c.local_file || '#';
+        const isFile = !!c.local_file;
+
+        if (viewMode === 'list') {
+          return `
+            <div class="card-glass rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-slate-700/60" data-id="${c.id}">
+              <div class="flex items-center gap-3.5 min-w-0">
+                ${hasImg ? `
+                  <img src="${imgSrc}" alt="${c.title}" class="w-14 h-14 rounded-lg object-cover flex-shrink-0 bg-slate-800 border border-slate-700/60">
+                ` : `
+                  <div class="w-14 h-14 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 border border-slate-700/60 flex-shrink-0">
+                    <i data-lucide="${pStyle.icon}" class="w-6 h-6"></i>
+                  </div>
+                `}
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 mb-1 flex-wrap">
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold border ${pStyle.badge}">${c.platform}</span>
+                    <span class="px-2 py-0.5 rounded text-[11px] font-medium border ${catStyle}">${c.category}</span>
+                    <span class="text-xs text-slate-400">by ${c.author}</span>
+                  </div>
+                  <h3 class="text-sm sm:text-base font-bold text-white truncate hover:text-purple-300 cursor-pointer" onclick="openModal(${c.id})">
+                    ${c.title}
+                  </h3>
+                  <p class="text-xs text-slate-400 line-clamp-1 mt-0.5">
+                    ${c.description || c.clean_body || '無特定提示詞說明'}
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                <button onclick="copyCardLink('${targetUrl}')" class="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs transition" title="複製連結">
+                  <i data-lucide="copy" class="w-4 h-4"></i>
+                </button>
+                <button onclick="openModal(${c.id})" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition">
+                  詳情
+                </button>
+                ${targetUrl && targetUrl !== '#' ? `
+                  <a href="${targetUrl}" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md transition flex items-center gap-1.5">
+                    <i data-lucide="${isFile ? 'download' : 'external-link'}" class="w-3.5 h-3.5"></i>
+                    <span>${isFile ? '下載' : '開啟'}</span>
+                  </a>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        }
+
+        // Masonry or Grid card
+        return `
+          <div class="${viewMode === 'masonry' ? 'masonry-item' : ''} card-glass rounded-2xl overflow-hidden flex flex-col group" data-id="${c.id}">
+            <!-- Card Image -->
+            ${hasImg ? `
+              <div class="relative w-full overflow-hidden bg-slate-800 aspect-[16/9] cursor-pointer" onclick="openModal(${c.id})">
+                <img src="${imgSrc}" alt="${c.title}" loading="lazy" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+                <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                  <span class="px-2 py-0.5 rounded-md text-[11px] font-bold border backdrop-blur-md shadow-sm ${pStyle.badge}">
+                    ${c.platform}
+                  </span>
+                </div>
+                <div class="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-xs text-slate-200">
+                  <span class="font-medium truncate">by ${c.author}</span>
+                  <span class="px-1.5 py-0.5 rounded text-[10px] font-medium border backdrop-blur-md ${catStyle}">
+                    ${c.category}
+                  </span>
+                </div>
+              </div>
+            ` : `
+              <div class="p-3.5 pb-0 flex items-center justify-between">
+                <span class="px-2 py-0.5 rounded-md text-[11px] font-bold border ${pStyle.badge}">
+                  ${c.platform}
+                </span>
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-medium border ${catStyle}">
+                  ${c.category}
+                </span>
+              </div>
+            `}
+
+            <!-- Card Body -->
+            <div class="p-4 flex-1 flex flex-col">
+              <h3 class="font-bold text-sm sm:text-base text-white hover:text-purple-300 transition cursor-pointer mb-1.5" onclick="openModal(${c.id})">
+                ${c.title}
+              </h3>
+
+              ${!hasImg ? `
+                <div class="text-xs text-slate-400 mb-2 flex items-center gap-1">
+                  <i data-lucide="user" class="w-3 h-3"></i> <span>${c.author}</span>
+                </div>
+              ` : ''}
+
+              <p class="text-xs text-slate-300 line-clamp-3 leading-relaxed mb-4 flex-1">
+                ${c.description || c.clean_body || '無特定提示詞說明，請點選進入試聊。'}
+              </p>
+
+              <!-- Card Action Bar -->
+              <div class="pt-3 border-t border-slate-700/50 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-1">
+                  <button onclick="copyCardLink('${targetUrl}')" class="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 text-xs transition" title="複製機器人網址">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button onclick="openModal(${c.id})" class="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 text-xs transition" title="檢視詳細資訊">
+                    <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+
+                ${targetUrl && targetUrl !== '#' ? `
+                  <a href="${targetUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-purple-500/10 flex items-center gap-1.5 transition">
+                    <span>${isFile ? '下載檔案' : '進入機器人'}</span>
+                    <i data-lucide="${isFile ? 'download' : 'arrow-up-right'}" class="w-3.5 h-3.5"></i>
+                  </a>
+                ` : `
+                  <button onclick="openModal(${c.id})" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">
+                    詳細內容
+                  </button>
+                `}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Modal functions
+      window.openModal = function(id) {
+        selectedCard = data.cards.find(c => c.id === id);
+        if (!selectedCard) return;
+
+        const c = selectedCard;
+        const pStyle = platformStyles[c.platform] || { badge: 'bg-slate-700 text-slate-300' };
+        const catStyle = categoryStyles[c.category] || 'bg-slate-700 text-slate-300';
+        const targetUrl = c.url || c.local_file || '';
+        const isFile = !!c.local_file;
+
+        document.getElementById('modalTitle').innerText = c.title;
+        document.getElementById('modalPlatform').innerText = c.platform;
+        document.getElementById('modalPlatform').className = `px-2.5 py-1 rounded-md text-xs font-bold border ${pStyle.badge}`;
+        document.getElementById('modalCategory').innerText = c.category;
+        document.getElementById('modalCategory').className = `px-2.5 py-1 rounded-md text-xs font-semibold border ${catStyle}`;
+        document.getElementById('modalAuthorName').innerText = c.author;
+        
+        const dateStr = c.published_at ? new Date(c.published_at).toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' }) : '';
+        document.getElementById('modalDateVal').innerText = dateStr;
+
+        // Image
+        const imgEl = document.getElementById('modalImage');
+        const imgContainer = document.getElementById('modalImageContainer');
+        const imgSrc = c.local_image || c.original_image;
+        if (imgSrc) {
+          imgEl.src = imgSrc;
+          imgContainer.classList.remove('hidden');
+        } else {
+          imgContainer.classList.add('hidden');
+        }
+
+        // Description
+        const descEl = document.getElementById('modalDescription');
+        descEl.innerText = c.description || '本卡片未特別提供外部中繼描述，請參考下方詳細教材內容或直接進入平台。';
+
+        // Body
+        const bodySection = document.getElementById('modalBodySection');
+        const bodyEl = document.getElementById('modalBody');
+        if (c.body && c.body.trim()) {
+          bodyEl.innerHTML = c.body;
+          bodySection.classList.remove('hidden');
+        } else {
+          bodySection.classList.add('hidden');
+        }
+
+        // Launch button
+        const launchBtn = document.getElementById('modalLaunchBtn');
+        const launchText = document.getElementById('modalLaunchText');
+        if (targetUrl) {
+          launchBtn.href = targetUrl;
+          launchBtn.classList.remove('hidden');
+          launchText.innerText = isFile ? '下載本地檔案' : `前往 ${c.platform} 試聊`;
+        } else {
+          launchBtn.classList.add('hidden');
+        }
+
+        // Open
+        detailModal.classList.remove('opacity-0', 'pointer-events-none');
+        modalBox.classList.remove('scale-95');
+        modalBox.classList.add('scale-100');
+        document.body.style.overflow = 'hidden';
+      };
+
+      function closeModal() {
+        detailModal.classList.add('opacity-0', 'pointer-events-none');
+        modalBox.classList.remove('scale-100');
+        modalBox.classList.add('scale-95');
+        document.body.style.overflow = '';
+      }
+
+      // Copy helpers
+      window.copyCardLink = function(url) {
+        if (!url || url === '#') {
+          showToast('此卡片無外部網址');
+          return;
+        }
+        navigator.clipboard.writeText(url).then(() => {
+          showToast('已複製機器人連結到剪貼簿！');
+        });
+      };
+
+      function showToast(msg) {
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMsg');
+        toastMsg.innerText = msg;
+        toast.classList.remove('translate-y-12', 'opacity-0', 'pointer-events-none');
+        setTimeout(() => {
+          toast.classList.add('translate-y-12', 'opacity-0', 'pointer-events-none');
+        }, 2500);
+      }
+
+      // Export CSV
+      function exportCSV() {
+        const headers = ['編號', '機器人名稱', '教師姓名', '學科領域', '建置平台', '提示詞或描述', '連結網址', '建立日期'];
+        const rows = currentCards.map((c, i) => [
+          i + 1,
+          `"${(c.title || '').replace(/"/g, '""')}"`,
+          `"${(c.author || '').replace(/"/g, '""')}"`,
+          `"${(c.category || '').replace(/"/g, '""')}"`,
+          `"${(c.platform || '').replace(/"/g, '""')}"`,
+          `"${(c.description || c.clean_body || '').replace(/"/g, '""')}"`,
+          `"${(c.url || c.local_file || '').replace(/"/g, '""')}"`,
+          `"${(c.published_at || '').slice(0, 10)}"`
+        ]);
+
+        const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `AI專家系統建置練習_機器人清單_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('已成功匯出 Excel 相容 CSV 檔案！');
+      }
+
+      // Random picker
+      function pickRandom() {
+        if (currentCards.length === 0) return;
+        const rand = currentCards[Math.floor(Math.random() * currentCards.length)];
+        openModal(rand.id);
+        showToast(`隨機推薦：${rand.title}`);
+      }
+
+      // Event listeners
+      function initEventListeners() {
+        // Search
+        searchInput.addEventListener('input', (e) => {
+          searchQuery = e.target.value;
+          btnClearSearch.classList.toggle('hidden', !searchQuery);
+          filterAndRenderCards();
+        });
+
+        btnClearSearch.addEventListener('click', () => {
+          searchInput.value = '';
+          searchQuery = '';
+          btnClearSearch.classList.add('hidden');
+          filterAndRenderCards();
+        });
+
+        // Keyboard shortcut / for search
+        document.addEventListener('keydown', (e) => {
+          if (e.key === '/' && document.activeElement !== searchInput) {
+            e.preventDefault();
+            searchInput.focus();
+          } else if (e.key === 'Escape') {
+            closeModal();
+          }
+        });
+
+        // Platform buttons
+        platformPills.addEventListener('click', (e) => {
+          const btn = e.target.closest('button[data-platform]');
+          if (!btn) return;
+          activePlatform = btn.dataset.platform;
+          renderFilterPills();
+          filterAndRenderCards();
+        });
+
+        // Category buttons
+        categoryPills.addEventListener('click', (e) => {
+          const btn = e.target.closest('button[data-category]');
+          if (!btn) return;
+          activeCategory = btn.dataset.category;
+          renderFilterPills();
+          filterAndRenderCards();
+        });
+
+        // View Switchers
+        document.getElementById('viewMasonry').addEventListener('click', () => {
+          currentView = 'masonry';
+          updateViewButtons();
+          renderCards();
+        });
+        document.getElementById('viewGrid').addEventListener('click', () => {
+          currentView = 'grid';
+          updateViewButtons();
+          renderCards();
+        });
+        document.getElementById('viewList').addEventListener('click', () => {
+          currentView = 'list';
+          updateViewButtons();
+          renderCards();
+        });
+
+        function updateViewButtons() {
+          const btns = {
+            masonry: document.getElementById('viewMasonry'),
+            grid: document.getElementById('viewGrid'),
+            list: document.getElementById('viewList')
+          };
+          for (const [k, el] of Object.entries(btns)) {
+            if (k === currentView) {
+              el.className = 'px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 bg-purple-600 text-white shadow-sm transition';
+            } else {
+              el.className = 'px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 text-slate-400 hover:text-slate-200 transition';
+            }
+          }
+        }
+
+        // Modal
+        document.getElementById('btnCloseModal').addEventListener('click', closeModal);
+        detailModal.addEventListener('click', (e) => {
+          if (e.target === detailModal) closeModal();
+        });
+
+        document.getElementById('btnModalCopyLink').addEventListener('click', () => {
+          if (selectedCard) {
+            const u = selectedCard.url || selectedCard.local_file;
+            copyCardLink(u);
+          }
+        });
+
+        document.getElementById('btnModalCopyPrompt').addEventListener('click', () => {
+          if (selectedCard) {
+            const text = `${selectedCard.title}\n\n說明：\n${selectedCard.description || selectedCard.clean_body || ''}`;
+            navigator.clipboard.writeText(text).then(() => {
+              showToast('已複製專家說明至剪貼簿！');
+            });
+          }
+        });
+
+        // Reset filters
+        document.getElementById('btnResetFilters').addEventListener('click', () => {
+          searchInput.value = '';
+          searchQuery = '';
+          activePlatform = 'ALL';
+          activeCategory = 'ALL';
+          renderFilterPills();
+          filterAndRenderCards();
+        });
+
+        // Export CSV
+        document.getElementById('btnExportCSV').addEventListener('click', exportCSV);
+
+        // Random pick
+        document.getElementById('btnRandom').addEventListener('click', pickRandom);
+
+        // Dark / Light toggle
+        document.getElementById('btnThemeToggle').addEventListener('click', () => {
+          document.documentElement.classList.toggle('dark');
+        });
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
